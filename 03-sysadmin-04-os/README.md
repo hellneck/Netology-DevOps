@@ -13,8 +13,9 @@
    Description=Node Exporter
 
    [Service]
-   ExecStart=/usr/bin/node_exporter
+   ExecStart=/usr/bin/node_exporter --web.listen-address=":9191" $REQ
    EnvironmentFile=/etc/node_exporter/env.conf
+   Restart=on-failure
 
    [Install]
    WantedBy=default.target   
@@ -32,7 +33,7 @@
      Memory: 14.0M
         CPU: 75ms
      CGroup: /system.slice/node_exporter.service
-             └─638 /usr/bin/node_exporter
+             └─638 /usr/bin/node_exporter --web.listen-address=:9191 --web.max-requests=10
 
   Jan 28 12:01:59 ubuntu-impish node_exporter[638]: ts=2022-01-28T09:01:59.398Z caller=node_exporter.go:115 level=info c>
   Jan 28 12:01:59 ubuntu-impish node_exporter[638]: ts=2022-01-28T09:01:59.398Z caller=node_exporter.go:115 level=info c>
@@ -67,10 +68,11 @@
   
   vagrant@ubuntu-impish:~$ sudo cat /proc/2259/environ
   LANG=C.UTF-8PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/snap/binINVOCATION_ID=a34e030c6d0143c78  
-  bf9284f19f60432JOURNAL_STREAM=8:23167SYSTEMD_EXEC_PID=2259ONE=oneTWO='two two'
+  bf9284f19f60432JOURNAL_STREAM=8:23167SYSTEMD_EXEC_PID=2259ONE=oneTWO='two two'REQ=--web.max-requests=10
   
   vagrant@ubuntu-impish:~$ cat /etc/node_exporter/env.conf
   ONE='one' "TWO='two two' too"
+  REQ='--web.max-requests=10'
   ```
 2. Ознакомьтесь с опциями node_exporter и выводом `/metrics` по-умолчанию. Приведите несколько опций, которые вы бы выбрали для базового мониторинга хоста по CPU, памяти, диску и сети.
    
