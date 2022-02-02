@@ -242,7 +242,54 @@
 
 1. Поместите туда тестовый файл, например `wget https://mirror.yandex.ru/ubuntu/ls-lR.gz -O /tmp/new/test.gz`.
 
+   * ```bash
+      vagrant@ubuntu-impish:~$ cd /tmp/new/
+      vagrant@ubuntu-impish:/tmp/new$ sudo wget https://mirror.yandex.ru/ubuntu/ls-lR.gz -O /tmp/new/test.gz
+      --2022-02-02 14:06:22--  https://mirror.yandex.ru/ubuntu/ls-lR.gz
+      Resolving mirror.yandex.ru (mirror.yandex.ru)... 213.180.204.183, 2a02:6b8::183
+      Connecting to mirror.yandex.ru (mirror.yandex.ru)|213.180.204.183|:443... connected.
+      HTTP request sent, awaiting response... 200 OK
+      Length: 22114592 (21M) [application/octet-stream]
+      Saving to: ‘/tmp/new/test.gz’
+
+      /tmp/new/test.gz            100%[=========================================>]  21.09M  2.24MB/s    in 6.0s
+
+      2022-02-02 14:06:28 (3.54 MB/s) - ‘/tmp/new/test.gz’ saved [22114592/22114592]
+      vagrant@ubuntu-impish:/tmp/new$ ls -la
+      total 21624
+      drwxr-xr-x  3 root root     4096 Feb  2 14:06 .
+      drwxrwxrwt 13 root root     4096 Feb  2 12:44 ..
+      drwx------  2 root root    16384 Feb  2 12:35 lost+found
+      -rw-r--r--  1 root root 22114592 Feb  2 12:32 test.gz
+     ```
+
 1. Прикрепите вывод `lsblk`.
+
+   * ```bash
+      vagrant@ubuntu-impish:~$ lsblk
+      NAME            MAJ:MIN RM  SIZE RO TYPE  MOUNTPOINT
+      loop0             7:0    0 61.9M  1 loop  /snap/core20/1270
+      loop1             7:1    0 61.9M  1 loop  /snap/core20/1328
+      loop2             7:2    0 43.4M  1 loop  /snap/snapd/14549
+      loop3             7:3    0 76.2M  1 loop  /snap/lxd/22292
+      loop5             7:5    0 43.3M  1 loop  /snap/snapd/14295
+      loop6             7:6    0 76.2M  1 loop  /snap/lxd/22306
+      sda               8:0    0  2.5G  0 disk
+      ├─sda1            8:1    0    2G  0 part
+      │ └─md0           9:0    0    2G  0 raid1
+      └─sda2            8:2    0  511M  0 part
+        └─md1           9:1    0 1018M  0 raid0
+          └─vg1-lvol0 253:0    0  100M  0 lvm   /tmp/new
+      sdb               8:16   0   40G  0 disk
+      └─sdb1            8:17   0   40G  0 part  /
+      sdc               8:32   0   10M  0 disk
+      sdd               8:48   0  2.5G  0 disk
+      ├─sdd1            8:49   0    2G  0 part
+      │ └─md0           9:0    0    2G  0 raid1
+      └─sdd2            8:50   0  511M  0 part
+        └─md1           9:1    0 1018M  0 raid0
+      └─vg1-lvol0 253:0    0  100M  0 lvm   /tmp/new  
+     ```
 
 1. Протестируйте целостность файла:
 
@@ -251,12 +298,69 @@
     root@vagrant:~# echo $?
     0
     ```
+    
+    *  ```bash
+       vagrant@ubuntu-impish:~$ gzip -t /tmp/new/test.gz
+       vagrant@ubuntu-impish:~$ echo $?
+       0
+       ```
 
 1. Используя pvmove, переместите содержимое PV с RAID0 на RAID1.
-
+    
+   *  ```bash
+      vagrant@ubuntu-impish:~$ sudo pvmove /dev/md1
+      /dev/md1: Moved: 16.00%
+      /dev/md1: Moved: 100.00%
+      ```
+      
 1. Сделайте `--fail` на устройство в вашем RAID1 md.
 
+   *  ```bash
+       vagrant@ubuntu-impish:~$ sudo mdadm /dev/md0 --fail /dev/sdd1
+       mdadm: set /dev/sdd1 faulty in /dev/md0
+       vagrant@ubuntu-impish:~$ sudo mdadm -D /dev/md0
+       /dev/md0:
+           Version : 1.2
+       Creation Time : Wed Feb  2 10:45:46 2022
+       Raid Level : raid1
+       Array Size : 2094080 (2045.00 MiB 2144.34 MB)
+       Used Dev Size : 2094080 (2045.00 MiB 2144.34 MB)
+       Raid Devices : 2
+       Total Devices : 2
+       Persistence : Superblock is persistent
+
+       Update Time : Wed Feb  2 14:27:07 2022
+             State : clean, degraded
+       Active Devices : 1
+       Working Devices : 1
+       Failed Devices : 1
+       Spare Devices : 0
+
+       Consistency Policy : resync
+
+              Name : ubuntu-impish:0  (local to host ubuntu-impish)
+              UUID : 3d839eb6:752df729:ac8d510c:15f78815
+            Events : 19
+
+       Number   Major   Minor   RaidDevice State
+        0       8        1        0      active sync   /dev/sda1
+        -       0        0        1      removed
+
+        1       8       49        -      faulty   /dev/sdd1
+      ```
+
 1. Подтвердите выводом `dmesg`, что RAID1 работает в деградированном состоянии.
+
+    *  ```bash
+       vagrant@ubuntu-impish:~$ sudo dmesg | grep md0
+       [ 5211.289362] md/raid1:md0: not clean -- starting background reconstruction
+       [ 5211.289368] md/raid1:md0: active with 2 out of 2 mirrors
+       [ 5211.289412] md0: detected capacity change from 0 to 4188160
+       [ 5211.296427] md: resync of RAID array md0
+       [ 5221.992240] md: md0: resync done.
+       [18492.525112] md/raid1:md0: Disk failure on sdd1, disabling device.
+                      md/raid1:md0: Operation continuing on 1 devices.
+       ```
 
 1. Протестируйте целостность файла, несмотря на "сбойный" диск он должен продолжать быть доступен:
 
@@ -266,4 +370,19 @@
     0
     ```
 
+    *  ```bash
+        vagrant@ubuntu-impish:~$ gzip -t /tmp/new/test.gz
+        vagrant@ubuntu-impish:~$ echo $?
+        0
+       ```
 1. Погасите тестовый хост, `vagrant destroy`.
+
+   *  ```bash
+       vagrant@ubuntu-impish:~$ exit
+       logout
+       Connection to 127.0.0.1 closed.
+       PS C:\VagrantUbuntu> vagrant destroy
+       default: Are you sure you want to destroy the 'default' VM? [y/N] y
+       ==> default: Forcing shutdown of VM...
+       ==> default: Destroying VM and associated drives...
+      ```
