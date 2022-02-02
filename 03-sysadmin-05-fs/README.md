@@ -179,41 +179,66 @@
 1. Создайте LV размером 100 Мб, указав его расположение на PV с RAID0.
 
    * ```bash
-    vagrant@ubuntu-impish:~$ sudo lvcreate -L 100M vg1 /dev/md1
-    Logical volume "lvol0" created.
-    vagrant@ubuntu-impish:~$ sudo lvdisplay
-    --- Logical volume ---
-    LV Path                /dev/vg1/lvol0
-    LV Name                lvol0
-    VG Name                vg1
-    LV UUID                dD6WWb-7jM5-LweQ-eh8U-R3Hw-9mDi-fMNkdM
-    LV Write Access        read/write
-    LV Creation host, time ubuntu-impish, 2022-02-02 12:26:23 +0300
-    LV Status              available
-    # open                 0
-    LV Size                100.00 MiB
-    Current LE             25
-    Segments               1
-    Allocation             inherit
-    Read ahead sectors     auto
-    -- currently set to    4096
-    Block device           253:0
-    ```
-
+      vagrant@ubuntu-impish:~$ sudo lvcreate -L 100M vg1 /dev/md1
+      Logical volume "lvol0" created.
+      vagrant@ubuntu-impish:~$ sudo lvdisplay
+      --- Logical volume ---
+      LV Path                /dev/vg1/lvol0
+      LV Name                lvol0
+      VG Name                vg1
+      LV UUID                dD6WWb-7jM5-LweQ-eh8U-R3Hw-9mDi-fMNkdM
+      LV Write Access        read/write
+      LV Creation host, time ubuntu-impish, 2022-02-02 12:26:23 +0300
+      LV Status              available
+      # open                 0
+      LV Size                100.00 MiB
+      Current LE             25
+      Segments               1
+      Allocation             inherit
+      Read ahead sectors     auto
+      -- currently set to    4096
+      Block device           253:0
+      ```  
 1. Создайте `mkfs.ext4` ФС на получившемся LV.
 
    * ```bash
-    vagrant@ubuntu-impish:~$ sudo mkfs.ext4 /dev/vg1/lvol0
-    mke2fs 1.46.3 (27-Jul-2021)
-    Creating filesystem with 25600 4k blocks and 25600 inodes
+     vagrant@ubuntu-impish:~$ sudo mkfs.ext4 /dev/vg1/lvol0
+     mke2fs 1.46.3 (27-Jul-2021)
+     Creating filesystem with 25600 4k blocks and 25600 inodes
 
-    Allocating group tables: done
-    Writing inode tables: done
-    Creating journal (1024 blocks): done
-    Writing superblocks and filesystem accounting information: done
-    ```
-
+     Allocating group tables: done
+     Writing inode tables: done
+     Creating journal (1024 blocks): done
+     Writing superblocks and filesystem accounting information: done
+     ```  
 1. Смонтируйте этот раздел в любую директорию, например, `/tmp/new`.
+
+   * ```bash
+      vagrant@ubuntu-impish:~$ sudo mount /dev/vg1/lvol0 /tmp/new
+      vagrant@ubuntu-impish:~$ lsblk
+      NAME            MAJ:MIN RM  SIZE RO TYPE  MOUNTPOINT
+      loop0             7:0    0 61.9M  1 loop  /snap/core20/1270
+      loop1             7:1    0 61.9M  1 loop  /snap/core20/1328
+      loop2             7:2    0 43.4M  1 loop  /snap/snapd/14549
+      loop3             7:3    0 76.2M  1 loop  /snap/lxd/22292
+      loop5             7:5    0 43.3M  1 loop  /snap/snapd/14295
+      loop6             7:6    0 76.2M  1 loop  /snap/lxd/22306
+      sda               8:0    0  2.5G  0 disk
+      ├─sda1            8:1    0    2G  0 part
+      │ └─md0           9:0    0    2G  0 raid1
+      └─sda2            8:2    0  511M  0 part
+      └─md1           9:1    0 1018M  0 raid0
+      └─vg1-lvol0 253:0    0  100M  0 lvm   /tmp/new
+      sdb               8:16   0   40G  0 disk
+      └─sdb1            8:17   0   40G  0 part  /
+      sdc               8:32   0   10M  0 disk
+      sdd               8:48   0  2.5G  0 disk
+      ├─sdd1            8:49   0    2G  0 part
+      │ └─md0           9:0    0    2G  0 raid1
+      └─sdd2            8:50   0  511M  0 part
+      └─md1           9:1    0 1018M  0 raid0
+      └─vg1-lvol0 253:0    0  100M  0 lvm   /tmp/new
+     ``` 
 
 1. Поместите туда тестовый файл, например `wget https://mirror.yandex.ru/ubuntu/ls-lR.gz -O /tmp/new/test.gz`.
 
