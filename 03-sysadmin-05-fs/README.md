@@ -142,11 +142,76 @@
 
 1. Создайте 2 независимых PV на получившихся md-устройствах.
 
+   * ```bash
+     vagrant@ubuntu-impish:~$ sudo pvcreate /dev/md0 /dev/md1
+     Physical volume "/dev/md0" successfully created.
+     Physical volume "/dev/md1" successfully created.
+     ```
+
 1. Создайте общую volume-group на этих двух PV.
+
+   * ```bash
+     vagrant@ubuntu-impish:~$ sudo vgcreate vg1 /dev/md0 /dev/md1
+     Volume group "vg1" successfully created
+     vagrant@ubuntu-impish:~$ sudo vgdisplay
+     --- Volume group ---
+     VG Name               vg1
+     System ID
+     Format                lvm2
+     Metadata Areas        2
+     Metadata Sequence No  1
+     VG Access             read/write
+     VG Status             resizable
+     MAX LV                0
+     Cur LV                0
+     Open LV               0
+     Max PV                0
+     Cur PV                2
+     Act PV                2
+     VG Size               <2.99 GiB
+     PE Size               4.00 MiB
+     Total PE              765
+     Alloc PE / Size       0 / 0
+     Free  PE / Size       765 / <2.99 GiB
+     VG UUID               ihksrT-PiEW-gfcD-GA4g-x8Ff-j5wb-HwmzWb
+     ```
 
 1. Создайте LV размером 100 Мб, указав его расположение на PV с RAID0.
 
+   * ```bash
+    vagrant@ubuntu-impish:~$ sudo lvcreate -L 100M vg1 /dev/md1
+    Logical volume "lvol0" created.
+    vagrant@ubuntu-impish:~$ sudo lvdisplay
+    --- Logical volume ---
+    LV Path                /dev/vg1/lvol0
+    LV Name                lvol0
+    VG Name                vg1
+    LV UUID                dD6WWb-7jM5-LweQ-eh8U-R3Hw-9mDi-fMNkdM
+    LV Write Access        read/write
+    LV Creation host, time ubuntu-impish, 2022-02-02 12:26:23 +0300
+    LV Status              available
+    # open                 0
+    LV Size                100.00 MiB
+    Current LE             25
+    Segments               1
+    Allocation             inherit
+    Read ahead sectors     auto
+    -- currently set to    4096
+    Block device           253:0
+    ```
+
 1. Создайте `mkfs.ext4` ФС на получившемся LV.
+
+   * ```bash
+    vagrant@ubuntu-impish:~$ sudo mkfs.ext4 /dev/vg1/lvol0
+    mke2fs 1.46.3 (27-Jul-2021)
+    Creating filesystem with 25600 4k blocks and 25600 inodes
+
+    Allocating group tables: done
+    Writing inode tables: done
+    Creating journal (1024 blocks): done
+    Writing superblocks and filesystem accounting information: done
+    ```
 
 1. Смонтируйте этот раздел в любую директорию, например, `/tmp/new`.
 
