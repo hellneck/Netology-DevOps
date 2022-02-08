@@ -39,9 +39,9 @@ HOST: stackoverflow.com
     Set-Cookie: prov=27760b6f-ad16-82cd-257f-596cadbc3cb5; domain=.stackoverflow.com; expires=Fri, 01-Jan-2055 00:00:00 GMT; path=/; HttpOnly
 
     Connection closed by foreign host.
- ```
+  ```
 
-   Код ответа `301 Moved Permanently` "Перемещён на постоянной основе". Этот код ответа значит, что URL запрашиваемого ресурса был изменён. В ответе предоставлен новый URL `https://stackoverflow.com`
+* Код ответа `301 Moved Permanently` "Перемещён на постоянной основе". Этот код ответа значит, что URL запрашиваемого ресурса был изменён. В ответе предоставлен новый URL `https://stackoverflow.com`
 
 2. Повторите задание 1 в браузере, используя консоль разработчика F12.
 - откройте вкладку `Network`
@@ -171,6 +171,7 @@ HOST: stackoverflow.com
     18. (waiting for reply)
     19. AS15169  8.8.8.8                            38.5%    65   37.8  38.6  34.5 106.0  11.0
    ```
+  * Самая большая задержка `Wrst` на 3 участке, а по среднему показателю `Avg` на 9 участке.
 
 7. Какие DNS сервера отвечают за доменное имя dns.google? Какие A записи? воспользуйтесь утилитой `dig`
 
@@ -223,7 +224,7 @@ HOST: stackoverflow.com
     ;; MSG SIZE  rcvd: 73
    ```
 
-   ```bash
+ * ```bash
     vagrant@ubuntu-impish:~$ dig -x 8.8.8.8
 
     ; <<>> DiG 9.16.15-Ubuntu <<>> -x 8.8.8.8
@@ -244,4 +245,4 @@ HOST: stackoverflow.com
     ;; SERVER: 127.0.0.53#53(127.0.0.53)
     ;; WHEN: Tue Feb 08 19:21:28 UTC 2022
     ;; MSG SIZE  rcvd: 73
-  ```
+   ```
