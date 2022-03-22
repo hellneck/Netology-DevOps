@@ -98,7 +98,7 @@ while true; do
   for i in ${host[@]}; do
     nc -zv $i 80
 	if (($? != 0)); then
-     echo $i > error
+         echo $i > error
 	 exit 1
 	fi
   done
