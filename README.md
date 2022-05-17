@@ -76,3 +76,7 @@
 ## 20. Оркестрация группой Docker контейнеров на примере Docker Compose.
 [5.4. Оркестрация группой Docker контейнеров на примере Docker Compose.](05-virt-04-docker-compose)
 
+
+## 21. Оркестрация кластером Docker контейнеров на примере Docker Swarm.
+[5.5. Оркестрация кластером Docker контейнеров на примере Docker Swarm.](05-virt-05-docker-swarm)
+
