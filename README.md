@@ -91,3 +91,7 @@
 
 ## 24. MySQL.
 [6.3. MySQL](06-db-03-mysql)
+
+
+## 25. PostgreSQL.
+[6.4. PostgreSQL](06-db-04-postgresql)
