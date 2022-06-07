@@ -95,3 +95,7 @@
 
 ## 25. PostgreSQL.
 [6.4. PostgreSQL](06-db-04-postgresql)
+
+
+## 26. Elasticsearch.
+[6.5. Elasticsearch](06-db-05-elasticsearch)
