@@ -99,3 +99,7 @@
 
 ## 26. Elasticsearch.
 [6.5. Elasticsearch](06-db-05-elasticsearch)
+
+
+## 27. Troubleshooting.
+[6.6. Troubleshooting](06-db-06-troubleshooting)
