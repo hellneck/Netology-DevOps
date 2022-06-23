@@ -103,3 +103,7 @@
 
 ## 27. Troubleshooting.
 [6.6. Troubleshooting](06-db-06-troubleshooting)
+
+
+## 28. Инфраструктура как код.
+[7.1. Инфраструктура как код](07-terraform-01-intro)
