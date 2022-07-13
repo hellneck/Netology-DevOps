@@ -119,3 +119,7 @@
 
 ## 31. Основы golang.
 [7.5. Основы golang](07-terraform-05-golang)
+
+
+## 32. Написание собственных провайдеров для Terraform.
+[7.6. Написание собственных провайдеров для Terraform](07-terraform-06-providers)
