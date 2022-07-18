@@ -123,3 +123,7 @@
 
 ## 32. Написание собственных провайдеров для Terraform.
 [7.6. Написание собственных провайдеров для Terraform](07-terraform-06-providers)
+
+
+## 33. Введение в Ansible.
+[8.1. Введение в Ansible](07-terraform-06-providers)
