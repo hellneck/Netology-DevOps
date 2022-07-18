@@ -126,4 +126,4 @@
 
 
 ## 33. Введение в Ansible.
-[8.1. Введение в Ansible](07-terraform-06-providers)
+[8.1. Введение в Ansible](08-ansible-01-base)
