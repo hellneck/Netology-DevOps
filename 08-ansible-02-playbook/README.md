@@ -26,7 +26,7 @@
     - name: Install Kibana
       hosts: kibana
       tasks:
-        - name: Upload tar.gz kibana from remote URL
+      - name: Upload tar.gz kibana from remote URL
         get_url:
             url: "https://mirrors.huaweicloud.com/kibana/{{kibana_version}}/kibana-{{kibana_version}}-linux-x86_64.tar.gz"
             dest: "/tmp/kibana-{{ kibana_version }}-linux-x86_64.tar.gz"
@@ -37,26 +37,26 @@
         register: get_kibana
         until: get_kibana is succeeded
         tags: kibana
-        - name: Create directrory for kibana
+      - name: Create directrory for kibana
         file:
-            state: directory
-            path: "{{ kibana_home }}"
+           state: directory
+           path: "{{ kibana_home }}"
         tags: kibana
-        - name: Extract kibana in the installation directory
+      - name: Extract kibana in the installation directory
         become: true
         unarchive:
-            copy: false
-            src: "/tmp/kibana-{{ kibana_version }}-linux-x86_64.tar.gz"
-            dest: "{{ kibana_home }}"
-            extra_opts: [--strip-components=1]
-            creates: "{{ kibana_home }}/bin/kibana"
+          copy: false
+          src: "/tmp/kibana-{{ kibana_version }}-linux-x86_64.tar.gz"
+          dest: "{{ kibana_home }}"
+          extra_opts: [--strip-components=1]
+          creates: "{{ kibana_home }}/bin/kibana"
         tags:
             - kibana
-        - name: Set environment kibana
+      - name: Set environment kibana
         become: true
         template:
-            src: templates/kib.sh.j2
-            dest: /etc/profile.d/kib.sh
+          src: templates/kib.sh.j2
+          dest: /etc/profile.d/kib.sh
         tags: kibana
    ```
 5. Запустите `ansible-lint site.yml` и исправьте ошибки, если они есть.
