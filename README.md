@@ -127,3 +127,7 @@
 
 ## 33. Введение в Ansible.
 [8.1. Введение в Ansible](08-ansible-01-base)
+
+
+## 34. Работа с Playbook.
+[8.2. Работа с Playbook](08-ansible-02-playbook)
