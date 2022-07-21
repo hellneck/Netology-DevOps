@@ -24,41 +24,43 @@
 4. Tasks должны: скачать нужной версии дистрибутив, выполнить распаковку в выбранную директорию, сгенерировать конфигурацию с параметрами.
    ```yaml
     - name: Install Kibana
-      hosts: kibana
-      tasks:
-      - name: Upload tar.gz kibana from remote URL
-        get_url:
-            url: "https://mirrors.huaweicloud.com/kibana/{{kibana_version}}/kibana-{{kibana_version}}-linux-x86_64.tar.gz"
-            dest: "/tmp/kibana-{{ kibana_version }}-linux-x86_64.tar.gz"
-            mode: 0755
-            timeout: 60
-            force: true
-            validate_certs: false
-        register: get_kibana
-        until: get_kibana is succeeded
-        tags: kibana
-      - name: Create directrory for kibana
-        file:
+     hosts: kibana
+     tasks:
+       - name: Upload tar.gz kibana from remote URL
+         ansible.builtin.get_url:
+           url: "https://mirrors.huaweicloud.com/kibana/{{ kibana_version }}/kibana-{{ kibana_version }}-linux-x86_64.tar.gz"
+           dest: "/tmp/kibana-{{ kibana_version }}-linux-x86_64.tar.gz"
+           mode: 0644
+           timeout: 60
+           force: true
+           validate_certs: false
+         register: get_kibana
+         until: get_kibana is succeeded
+         tags: kibana
+       - name: Create directrory for kibana
+         ansible.builtin.file:
            state: directory
            path: "{{ kibana_home }}"
-        tags: kibana
-      - name: Extract kibana in the installation directory
-        become: true
-        unarchive:
-          copy: false
-          src: "/tmp/kibana-{{ kibana_version }}-linux-x86_64.tar.gz"
-          dest: "{{ kibana_home }}"
-          extra_opts: [--strip-components=1]
-          creates: "{{ kibana_home }}/bin/kibana"
-        tags:
-            - kibana
-      - name: Set environment kibana
-        become: true
-        template:
-          src: templates/kib.sh.j2
-          dest: /etc/profile.d/kib.sh
-        tags: kibana
-   ```
+           mode: 0755
+         tags: kibana
+       - name: Extract kibana in the installation directory
+         become: true
+         ansible.builtin.unarchive:
+           copy: false
+           src: "/tmp/kibana-{{ kibana_version }}-linux-x86_64.tar.gz"
+           dest: "{{ kibana_home }}"
+           extra_opts: [--strip-components=1]
+           creates: "{{ kibana_home }}/bin/kibana"
+         tags:
+           - kibana
+       - name: Set environment kibana
+         become: true
+         ansible.builtin.template:
+           src: templates/kib.sh.j2
+           dest: /etc/profile.d/kib.sh
+           mode: 0755
+         tags: kibana
+      ```
 5. Запустите `ansible-lint site.yml` и исправьте ошибки, если они есть.
   ```
     in ~/mnt-homeworks/08-ansible-02-playbook/playbook at master(!?)
