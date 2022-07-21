@@ -60,7 +60,7 @@
         tags: kibana
    ```
 5. Запустите `ansible-lint site.yml` и исправьте ошибки, если они есть.
-  ```bash
+  ```
     in ~/mnt-homeworks/08-ansible-02-playbook/playbook at master(!?)
   → ansible-lint site.yml 
   WARNING  Overriding detected file kind 'yaml' with 'playbook' for given positional argument: site.yml
@@ -99,7 +99,7 @@
   kibana                     : ok=4    changed=2    unreachable=0    failed=1    skipped=0    rescued=0    ignored=0   
   ```
 7. Запустите playbook на `prod.yml` окружении с флагом `--diff`. Убедитесь, что изменения на системе произведены.
-  ```bash
+  ```
     in ~/mnt-homeworks/08-ansible-02-playbook/playbook at master(!?)
   → ansible-playbook site.yml -i inventory/prod.yml --diff 
 
@@ -246,7 +246,7 @@
   kibana                     : ok=11   changed=8    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
   ```
 8. Повторно запустите playbook с флагом `--diff` и убедитесь, что playbook идемпотентен.
-  ```bash
+  ```
   → ansible-playbook site.yml -i inventory/prod.yml --diff
 
   PLAY [Install Java] ************************************************************************************************************************************************************************************
